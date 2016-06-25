@@ -12,27 +12,27 @@
         </div>
         <div class="row">
             <div class="col-sm-6 col-sm-offset-4">
-                <input ng-model="ctlr.city" />enter city
-                <input ng-model="ctlr.classificationName" />enter classification
+                <input ng-model="ctlr.city" /> Enter city
+                <input ng-model="ctlr.classificationName" /> Enter classification
             </div>
             <div class="col-sm-6 col-sm-offset-3 buttons">
                 <a class="btn btn-lg btn-main1" ng-click="ctlr.search()" href="#/search">I'm feeling lucky!</a>
-                <a class="btn btn-lg btn-warning btn-main2" href="#/search2">Let me pick</a>
+                <a class="btn btn-lg btn-warning btn-main2" ng-click="ctlr.search()" href="#/search2">Let me pick</a>
             </div>
         </div>
-            <div class="row">
-                <div ng-repeat="item in ctlr.todaysItems">
-                    <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
-                </div>
+        @*<div class="row">
+            <div ng-repeat="item in ctlr.todaysItems">
+                <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
             </div>
+        </div>*@
 
-        </div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="/templates/search.html">
     <div class="main-container">
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-4">
+            <div class="col-sm-5 col-sm-offset-4">
                 <p class="lead text-center">
                     Here's your show!
                 </p>
@@ -43,9 +43,10 @@
                         </h5>
                     </div>
                     <div class="inner-box">
-                        <a href="{{ctlr.selectedItem.url}}">link</a> - {{ctlr.selectedItem.dates.start.localDate}}</h4>
+                        <img src="{{ctlr.selectedItem.images[6].url}}" style="width: 100%" />
                     </div>
                 </div>
+                <strong><a href="{{ctlr.selectedItem.url}}">Buy a Ticket</a></strong> - {{ctlr.selectedItem.dates.start.localDate}} @@ {{ctlr.selectedItem.dates.start.localTime}}
             </div>
         </div>
         <div class="text-center">
@@ -62,40 +63,18 @@
                     Here's 3 show!
                 </p>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4" ng-repeat="item in ctlr.todaysItems | limitTo: 3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h5 class="panel-title no-border text-center">
-                            {{ctlr.showTitle2}}
+                            {{item.name}}
                         </h5>
                     </div>
                     <div class="inner-box">
-
+                        <img src="{{item.images[6].url}}" style="width: 100%" />
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title no-border text-center">
-                            {{ctlr.showTitle3}}
-                        </h5>
-                    </div>
-                    <div class="inner-box">
-
-                    </div>
-                </div>
-            </div><div class="col-sm-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5 class="panel-title no-border text-center">
-                            {{ctlr.showTitle4}}
-                        </h5>
-                    </div>
-                    <div class="inner-box">
-
-                    </div>
-                </div>
+                <strong><a href="{{item.url}}">Buy a Ticket</a></strong> - {{item.dates.start.localDate}} @@ {{item.dates.start.localTime}}
             </div>
         </div>
         <div class="text-center">
@@ -132,6 +111,7 @@
                 var ymd;
                 var dateString;
                 //vm.todaysItems = [];
+
 
                 vm.search = _search;
 
