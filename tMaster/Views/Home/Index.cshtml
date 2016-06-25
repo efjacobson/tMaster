@@ -1,49 +1,145 @@
-﻿
-@{
-    ViewBag.Title = "Home Page";
-}
+﻿<div ng-view></div>
 
-<div class="jumbotron">
-    <h1 class="text-center">TicketMaster Roulette</h1>
-    <p class="lead text-center">Let us a choose a concert for you to attend tonight...</p>
-</div>
-<div class="text-center"
-     ng-controller="mainController as main"
-     ng-cloak>
-    <button id="button" ng-click="main.search()" class="btn btn-lg btn-danger">It's Lit!</button>
-    <button class="btn btn-lg btn-warning">It's Not Lit</button>
-    <input ng-model="main.city" />enter city
-    <input ng-model="main.classificationName" />enter classification
-    <h4>{{main.selectedItem.name}} - <a href="{{main.selectedItem.url}}">link</a> - {{main.selectedItem.dates.start.localDate}}</h4>
-    <hr />
-    <div ng-repeat="item in main.todaysItems">
-        <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
+<script type="text/ng-template" id="/templates/home.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <p class="lead text-center">
+                    Let us a choose an event for you to attend tonight! Press 'Search' and we'll serve you 3 neary by events.
+                    Press 'I'm Feeling Lucky' and we'll choose your concert for you!
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-4">
+                <input ng-model="ctlr.city" />enter city
+                <input ng-model="ctlr.classificationName" />enter classification
+            </div>
+            <div class="col-sm-6 col-sm-offset-3 buttons">
+                <a class="btn btn-lg btn-main1" ng-click="ctlr.search()" href="#/search">I'm feeling lucky!</a>
+                <a class="btn btn-lg btn-warning btn-main2" href="#/search2">Let me pick</a>
+            </div>
+        </div>
+            <div class="row">
+                <div ng-repeat="item in ctlr.todaysItems">
+                    <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
+                </div>
+            </div>
+
+        </div>
+</script>
+
+<script type="text/ng-template" id="/templates/search.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <p class="lead text-center">
+                    Here's your show!
+                </p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.selectedItem.name}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+                        <a href="{{ctlr.selectedItem.url}}">link</a> - {{ctlr.selectedItem.dates.start.localDate}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-lg btn-danger" href="#/">Not Feeling So Hot</a>
+        </div>
     </div>
+</script>
 
-</div>
+<script type="text/ng-template" id="/templates/search2.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p class="lead text-center">
+                    Here's 3 show!
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle2}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle3}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div><div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle4}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-lg btn-danger" href="#/">Not Feeling So Hot</a>
+        </div>
+    </div>
+</script>
+
 
 @section Scripts {
     <script src="~/Scripts/sabio.js"></script>
     <script type="text/javascript">
 
+
+
         (function () {
-            'use strict';
-
-            angular
-                .module('tmasterAPP', [])
+            "use strict";
+            angular.module('tmasterAPP', ['ngRoute'])
                 .controller('mainController', MainController);
+            MainController.$inject = ['$route', '$routeParams', '$location', '$http'];
 
-            MainController.$inject = ['$http'];
 
-            function MainController($http) {
-                /* jshint validthis:true */
+            function MainController($route, $routeParams, $location, $http) {
+
                 var vm = this;
+
+                vm.$route = $route;
+                vm.$location = $location;
+                vm.$routeParams = $routeParams;
+
 
                 var date;
                 var formattedMonth;
                 var ymd;
                 var dateString;
                 //vm.todaysItems = [];
+
+                vm.search = _search;
+
+                vm.showTitle1 = "Test Title";
+                vm.showTitle2 = "Test Rufus";
+                vm.showTitle3 = "Test Moses";
+                vm.showTitle4 = "Test Flume";
+
                 activate();
 
                 function activate() {
@@ -57,7 +153,6 @@
                     dateString = date.getFullYear() + '-' + formattedMonth + '-' + date.getDate() + 'T00:00:00Z';
                 }
 
-                vm.search = _search;
 
                 function _getEvents(city, classificationName, dateTime) {
                     console.log('https://app.ticketmaster.com/discovery/v2/events.json?size=20&apikey=SKNvy6YgRlefbMPGovx3GGtbkAKDzXGq&city=' + city + '&startDateTime=' + dateTime + '&classificationName=' + classificationName);
@@ -79,7 +174,6 @@
                             var rand = Math.random() * vm.todaysItems.length;
                             vm.selectedItem = vm.todaysItems[Math.floor(rand)];
                             console.log('selected: ', vm.selectedItem);
-
                         } else {
                             alert('sorry, no events found in your area. please try again');
                         }
@@ -91,10 +185,30 @@
                 function _search() {
                     _getEvents(vm.city, vm.classificationName, dateString);
                 }
+
             }
         })();
 
 
+        (function () {
+            "use strict";
+            angular.module("tmasterAPP")
+                .config(["$routeProvider", "$locationProvider",
+
+            function ($routeProvider, $locationProvider) {
+
+                $routeProvider.when('/', {
+                    templateUrl: '/templates/home.html',
+                }).when('/search', {
+                    templateUrl: '/templates/search.html'
+                }).when('/search2', {
+                    templateUrl: '/templates/search2.html'
+                });
+
+                $locationProvider.html5Mode(false);
+
+            }])
+        })();
 
 
 
