@@ -7,50 +7,119 @@
     <h1 class="text-center">TicketMaster Roulette</h1>
     <p class="lead text-center">Let us a choose a concert for you to attend tonight...</p>
 </div>
-<div class="text-center">
-    <button id="button" class="btn btn-lg btn-danger">It's Lit!</button>
+<div class="text-center"
+     ng-controller="mainController as main"
+     ng-cloak>
+    <button id="button" ng-click="main.search()" class="btn btn-lg btn-danger">It's Lit!</button>
     <button class="btn btn-lg btn-warning">It's Not Lit</button>
+    <input ng-model="main.city" />enter city
+    <input ng-model="main.classificationName" />enter classification
+    <h4>{{main.selectedItem.name}} - <a href="{{main.selectedItem.url}}">link</a> - {{main.selectedItem.dates.start.localDate}}</h4>
+    <hr />
+    <div ng-repeat="item in main.todaysItems">
+        <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
+</div>
+
 </div>
 
 @section Scripts {
     <script src="~/Scripts/sabio.js"></script>
     <script type="text/javascript">
     
-        (function (){
-            "use strict";
-            angular.module('tmasterAPP', [])
+        (function () {
+            'use strict';
+
+            angular
+                .module('tmasterAPP', [])
                 .controller('mainController', MainController);
-            MainController.$inject = [];
-            function MainController() {
 
+            MainController.$inject = ['$http'];
 
+            function MainController($http) {
+                /* jshint validthis:true */
+                var vm = this;
+
+                var date;
+                var formattedMonth;
+                var ymd;
+                var dateString;
+                //vm.todaysItems = [];
+                activate();
+
+                function activate() {
+                    date = new Date();
+                    formattedMonth = date.getMonth() + 1;
+                    if (formattedMonth < 10) {
+                        formattedMonth = '0' + formattedMonth;
+                    }
+                    ymd = date.getFullYear() + '-' + formattedMonth + '-' + date.getDate();
+                    vm.ymd = ymd;
+                    dateString = date.getFullYear() + '-' + formattedMonth + '-' + date.getDate() + 'T00:00:00Z';
             }
 
+                vm.search = _search;
+
+                function _getEvents(city, classificationName, dateTime) {
+                    console.log('https://app.ticketmaster.com/discovery/v2/events.json?size=20&apikey=SKNvy6YgRlefbMPGovx3GGtbkAKDzXGq&city=' + city + '&startDateTime=' + dateTime + '&classificationName=' + classificationName);
+                    $http({
+                        method: 'GET',
+                        url: 'https://app.ticketmaster.com/discovery/v2/events.json?size=20&apikey=SKNvy6YgRlefbMPGovx3GGtbkAKDzXGq&city=' + city
+                                + '&startDateTime=' + dateTime
+                                + '&classificationName=' + classificationName,
+                    }).then(function (response) {
+                        vm.todaysItems = [];
+                        if (response.data._embedded) {
+                            vm.items = response.data._embedded.events;
+                            for (var index = 0; index < vm.items.length; index++) {
+                                if (vm.items[index].dates.start.localDate == ymd) {
+                                    vm.todaysItems.push(vm.items[index]);
+                                }
+                            }
+                            console.log('todays: ', vm.todaysItems);
+                            var rand = Math.random() * vm.todaysItems.length;
+                            vm.selectedItem = vm.todaysItems[Math.floor(rand)];
+                            console.log('selected: ', vm.selectedItem);
+
+                        } else {
+                            alert('sorry, no events found in your area. please try again');
+            }
+                    }, function (response) {
+                        console.log(response);
+                    });
+                }
+
+                function _search() {
+                    _getEvents(vm.city, vm.classificationName, dateString);
+                }
+            }
         })();
         
 
 
    
 
-        sabio.page.startUp = function () {
+        //sabio.page.startUp = function () {
 
-            $("#button").on("click", sabio.page.handlers.searchEvents);
+        //    $("#button").on("click", sabio.page.handlers.searchEvents);
 
-            $("#button").on("click", sabio.page.handlers.getOffers);
+        //}
 
-           
-        }
+        //sabio.page.handlers.searchEvents = function () {
+        //    console.log("button firing");
+        //    var url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=1NxKoxkq6DbOwXVZeGfwKMnR12D3ebFC&radius=20&unit=miles&classificationName=music";
+        //    console.log(url);
+        //    var settings = {
+        //        type: "GET",
+        //        dataType: "json",
+        //        async: true,
+        //        error: getEventsError,
+        //        success: getEventsSuccess
+        //    }
+        //    $.ajax(url, settings);
 
-        sabio.page.handlers.searchEvents = function () {
-            console.log("button firing");
-            var url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=1NxKoxkq6DbOwXVZeGfwKMnR12D3ebFC&radius=20&unit=miles&classificationName=music";
-            console.log(url);
-            var settings = {
-                type: "GET",
-                dataType: "json",
-                async: true,
-                error: getEventsError,
-                success: getEventsSuccess
+        // success
+        sabio.page.onGetOffersSuccess = function (data) {
+            console.log("Offers: " + data);
             }
             $.ajax(url, settings);
 
@@ -68,20 +137,16 @@
             };
             $.ajax(url, settings);
         }
-        
+
         // success
         sabio.page.onGetOffersSuccess = function (data) {
             console.log("Offers: " + data);
         }
 
-        var getEventsSuccess = function (data) {
-            console.log(data);
-        }
-        // error
-
         var getEventsError = function (jqXhr, status, error) {
             console.log("Error: " + error);
         }
+        // error
 
         sabio.page.onGetOffersError = function (jqXhr, status, error) {
             console.log(error);
