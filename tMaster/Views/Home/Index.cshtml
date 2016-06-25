@@ -1,21 +1,69 @@
 ﻿
+@{
+    ViewBag.Title = "Home Page";
+}
+
 <div class="jumbotron">
     <h1 class="text-center">TicketMaster Roulette</h1>
     <p class="lead text-center">Let us a choose a concert for you to attend tonight...</p>
 </div>
-
 <div class="text-center">
-    <button class="btn btn-lg btn-danger">It's Lit!</button>
+    <button id="button" class="btn btn-lg btn-danger">It's Lit!</button>
     <button class="btn btn-lg btn-warning">It's Not Lit</button>
 </div>
 
-<script type="text/javascript">
+@section Scripts {
+    <script src="~/Scripts/sabio.js"></script>
+    <script type="text/javascript">
+    
+        (function (){
+            "use strict";
+            angular.module('tmasterAPP', [])
+                .controller('mainController', MainController);
+            MainController.$inject = [];
+            function MainController() {
 
-    var tmasterAPP = angular.module('scotchApp', []);
 
-    tmasterAPP.controller('mainController', function ($scope) {
+            }
+
+        })();
+        
 
 
-    });
+   
 
-</script>
+        sabio.page.startUp = function () {
+
+            $("#button").on("click", sabio.page.handlers.searchEvents);
+
+        }
+
+        sabio.page.handlers.searchEvents = function () {
+            console.log("button firing");
+            var url = "https://app.ticketmaster.com/discovery/v2/events.json?apikey=1NxKoxkq6DbOwXVZeGfwKMnR12D3ebFC&radius=20&unit=miles&classificationName=music";
+            console.log(url);
+            var settings = {
+                type: "GET",
+                dataType: "json",
+                async: true,
+                error: getEventsError,
+                success: getEventsSuccess
+            }
+            $.ajax(url, settings);
+
+        }
+
+        var getEventsSuccess = function (data) {
+            console.log(data);
+        }
+
+        var getEventsError = function (jqXhr, status, error) {
+            console.log(error);
+        }
+
+
+
+
+    </script>
+
+}
