@@ -36,6 +36,9 @@
 
             $("#button").on("click", sabio.page.handlers.searchEvents);
 
+            $("#button").on("click", sabio.page.handlers.getOffers);
+
+           
         }
 
         sabio.page.handlers.searchEvents = function () {
@@ -53,11 +56,34 @@
 
         }
 
+        sabio.page.handlers.getOffers = function () {
+            var eventId = "vvG1zZf6XbHdGB";
+            var url = "https://app.ticketmaster.com/commerce/v2/events/vvG1zZf6XbHdGB/offers.json?apikey=1NxKoxkq6DbOwXVZeGfwKMnR12D3ebFC";
+            var settings = {
+                dataType: "json",
+                type: "GET",
+                async: true,
+                success: sabio.page.onGetOffersSuccess,
+                error: sabio.page.onGetOffersError
+            };
+            $.ajax(url, settings);
+        }
+        
+        // success
+        sabio.page.onGetOffersSuccess = function (data) {
+            console.log("Offers: " + data);
+        }
+
         var getEventsSuccess = function (data) {
             console.log(data);
         }
+        // error
 
         var getEventsError = function (jqXhr, status, error) {
+            console.log("Error: " + error);
+        }
+
+        sabio.page.onGetOffersError = function (jqXhr, status, error) {
             console.log(error);
         }
 
