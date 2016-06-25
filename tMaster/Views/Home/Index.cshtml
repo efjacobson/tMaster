@@ -13,7 +13,19 @@
     <button id="button" ng-click="main.search()" class="btn btn-lg btn-danger">It's Lit!</button>
     <button class="btn btn-lg btn-warning">It's Not Lit</button>
     <input ng-model="main.city" />enter city
-    <input ng-model="main.classificationName" />enter classification
+    <select ng-model="main.segmentName" 
+            ng-change="main.populateClassificationList()" 
+            ng-options="item.segment as item.segment for item in main.segmentsList">
+        <option value="" 
+                disabled 
+                hidden>Choose a Category</option>
+    </select>
+    <select ng-model="main.classificationName" 
+            ng-options="name for name in main.selectedClassificationList">
+        <option value="" 
+                disabled 
+                hidden>Choose a Genre</option>
+    </select>
     <h4>{{main.selectedItem.name}} - <a href="{{main.selectedItem.url}}">link</a> - {{main.selectedItem.dates.start.localDate}}</h4>
     <hr />
     <div ng-repeat="item in main.todaysItems">
@@ -58,6 +70,74 @@
                 }
 
                 vm.search = _search;
+                vm.populateClassificationList = _populateClassificationList;
+                vm.selectedClassificationList = [];
+                vm.segmentsList = [
+                    {
+                        segment: 'Music',
+                        classifications: ['Alternative Rock',
+                                            'Cabaret',
+                                            'Classical',
+                                            'Comedy',
+                                            'Country',
+                                            'Country and Folk',
+                                            'Dance/Electronic',
+                                            'Festivals',
+                                            'Hard Rock/Metal',
+                                            'Jazz and Blues',
+                                            'Latin',
+                                            'Miscellaneous',
+                                            'New Age and Spiritual',
+                                            'R&B/Urban Soul',
+                                            'Rap and Hip-Hop',
+                                            'Rock and Pop',
+                                            'World Music']
+                    },
+                    {
+                        segment: 'Arts And Theatre',
+                        classifications: ['Broadway',
+                                        'Off-Broadway',
+                                        'Ballet and Dance',
+                                        'Classical',
+                                        'Comedy',
+                                        'Museums and Exhibits',
+                                        'Musical',
+                                        'Opera',
+                                        'Plays']
+                    },
+                    {
+                        segment: 'Sports',
+                        classifications: ['Baseball',
+                                        'Basketball',
+                                        'Boxing',
+                                        'Bull Riding',
+                                        'Competitions',
+                                        'Curling',
+                                        'Field Sports',
+                                        'Football',
+                                        'Golf',
+                                        'Handball',
+                                        'Hockey',
+                                        'Lacrosse',
+                                        'Mixed Martial Arts',
+                                        'Motorsports',
+                                        'Rodeo',
+                                        'Skating',
+                                        'Soccer',
+                                        'Sports Packages',
+                                        'Tennis',
+                                        'Volleyball',
+                                        'Wrestling']
+                    },
+                    {
+                        segment: 'Family',
+                        classifications: ['Children\'s Music and Theater',
+                                        'Circus',
+                                        'Fairs and Festivals',
+                                        'Family Attractions',
+                                        'Ice Shows',
+                                        'Magic Shows']
+                    }];
 
                 function _getEvents(city, classificationName, dateTime) {
                     console.log('https://app.ticketmaster.com/discovery/v2/events.json?size=20&apikey=SKNvy6YgRlefbMPGovx3GGtbkAKDzXGq&city=' + city + '&startDateTime=' + dateTime + '&classificationName=' + classificationName);
@@ -90,6 +170,15 @@
 
                 function _search() {
                     _getEvents(vm.city, vm.classificationName, dateString);
+                }
+
+                function _populateClassificationList() {
+                    for (var index = 0; index < vm.segmentsList.length; index++) {
+                        if (vm.segmentsList[index].segment == vm.segmentName) {
+                            vm.selectedClassificationList = vm.segmentsList[index].classifications;
+                        }
+                    }
+                    console.log(vm.selectedClassificationList);
                 }
             }
         })();
