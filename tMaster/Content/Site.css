@@ -22,3 +22,42 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.topbar {
+    color: white;
+    padding-top: 1.5%;
+    font-size: 2em;
+    padding-bottom: 1.5%;
+}
+
+.main-container {
+    margin-top: 7%;
+}
+
+
+.btn-main1 {
+    margin-right: 2.5%;
+    background-color: #009cde;
+    border-color: #008fcc; 
+    color: #ffffff;
+}
+
+.btn-main1:hover {
+    color: #ffffff;
+    background-color: #008fcc;
+    border-color: #007db3; 
+}
+
+.btn-main2 {
+    margin-left: 2.5%;
+}
+
+.inner-box {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 3px 3px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 1px rgba(180, 180, 180, 0.5);
+    padding: 20px 15px;
+}

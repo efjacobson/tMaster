@@ -1,36 +1,153 @@
-﻿
-@{
-    ViewBag.Title = "Home Page";
-}
+﻿<div ng-view></div>
 
-<div class="jumbotron">
-    <h1 class="text-center">TicketMaster Roulette</h1>
-    <p class="lead text-center">Let us a choose a concert for you to attend tonight...</p>
-</div>
-<div class="text-center">
-    <button id="button" class="btn btn-lg btn-danger">It's Lit!</button>
-    <button class="btn btn-lg btn-warning">It's Not Lit</button>
-</div>
+<script type="text/ng-template" id="/templates/home.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <p class="lead text-center">
+                    Let us a choose an event for you to attend tonight! Press 'Search' and we'll serve you 3 neary by events.
+                    Press 'I'm Feeling Lucky' and we'll choose your concert for you!
+                </p>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-lg btn-main1" href="#/search">I'm feeling lucky!</a>
+            <a class="btn btn-lg btn-warning btn-main2" href="#/search2">Let me pick</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="/templates/search.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <p class="lead text-center">
+                    Here's your show!
+                </p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle1}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-lg btn-danger" href="#/">Not Feeling So Hot</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="/templates/search2.html">
+    <div class="main-container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p class="lead text-center">
+                    Here's 3 show!
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle2}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle3}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div><div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title no-border text-center">
+                            {{ctlr.showTitle4}}
+                        </h5>
+                    </div>
+                    <div class="inner-box">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-lg btn-danger" href="#/">Not Feeling So Hot</a>
+        </div>
+    </div>
+</script>
 
 @section Scripts {
     <script src="~/Scripts/sabio.js"></script>
     <script type="text/javascript">
-    
-        (function (){
+
+
+
+        (function () {
             "use strict";
-            angular.module('tmasterAPP', [])
+            angular.module('tmasterAPP', ['ngRoute'])
                 .controller('mainController', MainController);
-            MainController.$inject = [];
-            function MainController() {
+            MainController.$inject = ['$route', '$routeParams', '$location'];
 
 
+            function MainController($route, $routeParams, $location) {
+
+                var vm = this;
+
+                vm.$route = $route;
+                vm.$location = $location;
+                vm.$routeParams = $routeParams;
+
+                vm.feelingLucky = _feelingLucky;
+
+                vm.showTitle1 = "Test Title";
+                vm.showTitle2 = "Test Rufus";
+                vm.showTitle3 = "Test Moses";
+                vm.showTitle4 = "Test Flume";
+
+                function _feelingLucky() {
+                    $location.path() = '/search.html/'
+                }
             }
-
         })();
-        
 
 
-   
+        (function () {
+            "use strict";
+            angular.module("tmasterAPP")
+                .config(["$routeProvider", "$locationProvider",
+
+            function ($routeProvider, $locationProvider) {
+
+                $routeProvider.when('/', {
+                    templateUrl: '/templates/home.html',
+                }).when('/search', {
+                    templateUrl: '/templates/search.html'
+                }).when('/search2', {
+                    templateUrl: '/templates/search2.html'
+                });
+
+                $locationProvider.html5Mode(false);
+
+            }])
+        })();
+
+
 
         sabio.page.startUp = function () {
 
