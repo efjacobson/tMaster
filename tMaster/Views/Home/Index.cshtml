@@ -18,14 +18,14 @@
     <hr />
     <div ng-repeat="item in main.todaysItems">
         <h4>{{item.name}} - <a href="{{item.url}}">link</a> - {{item.dates.start.localDate}}</h4>
-    </div>
+</div>
 
 </div>
 
 @section Scripts {
     <script src="~/Scripts/sabio.js"></script>
     <script type="text/javascript">
-
+    
         (function () {
             'use strict';
 
@@ -55,7 +55,7 @@
                     ymd = date.getFullYear() + '-' + formattedMonth + '-' + date.getDate();
                     vm.ymd = ymd;
                     dateString = date.getFullYear() + '-' + formattedMonth + '-' + date.getDate() + 'T00:00:00Z';
-                }
+            }
 
                 vm.search = _search;
 
@@ -82,7 +82,7 @@
 
                         } else {
                             alert('sorry, no events found in your area. please try again');
-                        }
+            }
                     }, function (response) {
                         console.log(response);
                     });
@@ -93,10 +93,10 @@
                 }
             }
         })();
+        
 
 
-
-
+   
 
         //sabio.page.startUp = function () {
 
@@ -117,15 +117,40 @@
         //    }
         //    $.ajax(url, settings);
 
-        //}
+        // success
+        sabio.page.onGetOffersSuccess = function (data) {
+            console.log("Offers: " + data);
+            }
+            $.ajax(url, settings);
 
-        //var getEventsSuccess = function (data) {
-        //    console.log(data);
-        //}
+        }
 
-        //var getEventsError = function (jqXhr, status, error) {
-        //    console.log(error);
-        //}
+        sabio.page.handlers.getOffers = function () {
+            var eventId = "vvG1zZf6XbHdGB";
+            var url = "/api/offers/" + eventId;
+            var settings = {
+                dataType: "json",
+                type: "GET",
+                async: true,
+                success: sabio.page.onGetOffersSuccess,
+                error: sabio.page.onGetOffersError
+            };
+            $.ajax(url, settings);
+        }
+
+        // success
+        sabio.page.onGetOffersSuccess = function (data) {
+            console.log("Offers: " + data);
+        }
+
+        var getEventsError = function (jqXhr, status, error) {
+            console.log("Error: " + error);
+        }
+        // error
+
+        sabio.page.onGetOffersError = function (jqXhr, status, error) {
+            console.log(error);
+        }
 
 
 
